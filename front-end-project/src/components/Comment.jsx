@@ -11,36 +11,35 @@ function Comments() {
 
   useEffect(() => {
     api.fetchCommentsByReviewId(review_id).then((comments) => {
-        setComments(comments);
-        setIsLoading(false);
-    })
+      setComments(comments);
+      setIsLoading(false);
+    });
   }, [review_id]);
 
   if (isLoading) {
-    console.log(comments.body);
     return <p>loading...</p>;
   }
 
-  if(!comments) {
+  if (!comments) {
     return <p>no comments found</p>;
   }
 
   return (
     <div className="Comments">
-        <ul>
-            {comments.map((comment) => (
-                <CommentCard
-                key={comment.comment_id}
-                body={comment.body}
-                review_id={comment.review_id}
-                author={comment.author}
-                votes={comment.votes}
-                created_at={comment.created_at}
-                />
-            ))}
-        </ul>
+      <ul>
+        {comments.map((comment) => (
+          <CommentCard
+            key={comment.comment_id}
+            body={comment.body}
+            review_id={comment.review_id}
+            author={comment.author}
+            votes={comment.votes}
+            created_at={comment.created_at}
+          />
+        ))}
+      </ul>
     </div>
-  )
+  );
 }
 
 export default Comments;
