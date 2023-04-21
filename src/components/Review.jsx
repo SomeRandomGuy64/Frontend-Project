@@ -26,22 +26,52 @@ function Review() {
   }
 
   const handleUpvote = (review_id) => {
-    setDisableUpButton(true);
-    setDisableDownButton(false);
-    setLocalVotes((currVotes) => {
-      return currVotes + 1
-    })
-    api.patchVotes(review_id);
-  }
-
+    if (disableDownButton) {
+      api.patch2Votes(review_id).then(() => {
+        setLocalVotes((currVotes) => currVotes + 2);
+        setDisableUpButton(true);
+        setDisableDownButton(false);
+      });
+    } else if (!disableDownButton) {
+      api.patchVotes(review_id).then(() => {
+        setLocalVotes((currVotes) => currVotes + 1);
+        setDisableUpButton(true);
+        setDisableDownButton(false);
+      });
+    }
+  };
+  
   const handleDownvote = (review_id) => {
-    setDisableDownButton(true);
-    setDisableUpButton(false);
-    setLocalVotes((currVotes) => {
-      return currVotes - 1
-    })
-    api.patchDownVotes(review_id);
-  }
+    if (disableUpButton) {
+      api.patch2DownVotes(review_id).then(() => {
+        setLocalVotes((currVotes) => currVotes - 2);
+        setDisableDownButton(true);
+        setDisableUpButton(false);
+      });
+    } else if (!disableUpButton) {
+      api.patchDownVotes(review_id).then(() => {
+        setLocalVotes((currVotes) => currVotes - 1);
+        setDisableDownButton(true);
+        setDisableUpButton(false);
+      });
+    }
+  };
+  
+  const handleRemoveVote = (review_id) => {
+    if (disableDownButton === true) {
+      api.patchVotes(review_id).then(() => {
+        setLocalVotes((currVotes) => currVotes + 1);
+        setDisableDownButton(false);
+        setDisableUpButton(false);
+      });
+    } else if (disableUpButton === true) {
+      api.patchDownVotes(review_id).then(() => {
+        setLocalVotes((currVotes) => currVotes - 1);
+        setDisableDownButton(false);
+        setDisableUpButton(false);
+      });
+    }
+  };
 
   return (
     <div className="Review">
@@ -53,12 +83,33 @@ function Review() {
       <img src={review.review_img_url} alt={review.title} />
       <p>Created at: {review.created_at}</p>
       <p>Votes: {review.votes + localVotes}</p>
-      <button disabled={disableUpButton} onClick={() => {handleUpvote(review.review_id)}}>Upvote!</button>
-      <button disabled={disableDownButton} onClick={() => {handleDownvote(review.review_id)}}>Downvote!</button>
+      <button
+        disabled={disableUpButton}
+        onClick={() => {
+          handleUpvote(review.review_id);
+        }}
+      >
+        Upvote!
+      </button>
+      <button
+        onClick={() => {
+          handleRemoveVote(review.review_id);
+        }}
+      >
+        Remove vote!
+      </button>
+      <button
+        disabled={disableDownButton}
+        onClick={() => {
+          handleDownvote(review.review_id);
+        }}
+      >
+        Downvote!
+      </button>
       <p>Comment count: {review.comment_count}</p>
       <br></br>
       <h3>Comments: </h3>
-      <Comments/>
+      <Comments />
     </div>
   );
 }
