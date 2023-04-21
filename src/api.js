@@ -31,9 +31,27 @@ export const patchVotes = (review_id) => {
     });
 };
 
+export const patch2Votes = (review_id) => {
+  return axios
+    .patch(`${baseUrl}reviews/${review_id}`, { inc_votes: 2 })
+    .then(({ data }) => {
+      console.log(data);
+      return data;
+    });
+};
+
 export const patchDownVotes = (review_id) => {
   return axios
     .patch(`${baseUrl}reviews/${review_id}`, { inc_votes: -1 })
+    .then(({ data }) => {
+      console.log(data);
+      return data;
+    });
+}
+
+export const patch2DownVotes = (review_id) => {
+  return axios
+    .patch(`${baseUrl}reviews/${review_id}`, { inc_votes: -2 })
     .then(({ data }) => {
       console.log(data);
       return data;
